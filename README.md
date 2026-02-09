@@ -80,24 +80,52 @@ A third-party judge model scores both debaters on:
 ## Repository Structure
 
 ```
+.
+├── README.md
+│
+├── figures/
+│   ├── exp_setup.png
+│   ├── overall_alignment.png
+│   ├── overall_consistency.png
+│   ├── proposer_timeline_sorted.png
+│   ├── challenger_timeline_sorted.png
+│   └── judge_discrepancy_split.png
+│
+├── analysis/
+│   ├── alignment_and_consistency.ipynb
+│   ├── truth_flip_latency_plots.ipynb
+│   └── judge_disagreement_plot.ipynb
+│
 ├── data/
-│   ├── raw/              # Original experimental outputs (model pairings + judges)
-│   └── processed/        # Cleaned datasets with computed metrics
-├── plots/                # Visualizations of key findings
-│   ├── alignment_scores.png
-│   ├── belief_consistency.png
-│   ├── truth_flip_latency.png
-│   └── judge_variance.png
-├── notebooks/            # Analysis walkthrough with interpretations
-│   └── analysis.ipynb
-├── prompts/              # Experimental templates
-│   ├── belief_statement.txt
-│   ├── pressure_prompt.txt
-│   ├── debate_arguments.txt
-│   └── judge_rubric.txt
-└── src/                  # Data processing and plotting scripts
-    ├── process_data.py
-    └── generate_plots.py
+│   ├── sandbox_results.csv
+│   ├── sandbox_raw_results.csv
+│   └── templates/
+│       └── prompt_template.ipynb
+│
+├── transcripts/
+│   ├── gemini_pro_vs_flash/
+│   │   ├── summary_debate.md
+│   │   ├── full_debate.md
+│   │   ├── judge1_eval.txt
+│   │   └── judge2_eval.txt
+│   │
+│   ├── gpt5_vs_gpt_realtime/
+│   │   ├── summary_debate.md
+│   │   ├── full_debate.md
+│   │   ├── judge1_eval.txt
+│   │   └── judge2_eval.txt
+│   │
+│   ├── gpt_vs_deepseek/
+│   │   ├── summary_debate.md
+│   │   ├── full_debate.md
+│   │   ├── judge1_eval.txt
+│   │   └── judge2_eval.txt
+│   │
+│   └── grok_vs_opus/
+│       ├── summary_debate.md
+│       ├── full_debate.md
+│       ├── judge1_eval.txt
+│       └── judge2_eval.txt
 ```
 
 ---
