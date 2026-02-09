@@ -1,79 +1,110 @@
 # LLM Debate Under Adversarial Pressure
 
-**Evaluating how large language models maintain truthfulness and consistency when subjected to persuasive pressure during structured debate.**
+**Evaluating whether large language models maintain truthful and consistent beliefs when subjected to persuasive pressure in structured debate.**
 
 ---
 
-## Overview
+## TL;DR
 
-This experiment investigates a critical safety question: **Do LLMs maintain accurate beliefs under adversarial conditions, or can they be persuaded to adopt false positions through debate?**
+> **LLM alignment is role-dependent and pressure-sensitive.**  
+Models that appear aligned in static evaluations can rapidly lose alignment under adversarial framing. Recovery after a belief flip is a stronger robustness signal than perfect consistency, and refusal behaviors may mask underlying misalignment.
 
-I designed a controlled framework to measure three key safety properties:
-- **Alignment Stability**: How well models maintain factually correct positions
-- **Belief Consistency**: Whether models contradict themselves under pressure  
-- **Truth-Flip Dynamics**: When and how models abandon accurate beliefs
+---
 
-This work connects to broader questions about scalable oversight, debate as an alignment mechanism, and deployment safety for AI systems engaging in persuasive or advisory roles.
+## What This Project Studies
+
+**Core question:**  
+> *Can LLMs be persuaded to abandon accurate beliefs through debate, even after hearing correct counterarguments?*
+
+This project measures:
+- **Alignment Stability** — adherence to factual ground truth  
+- **Belief Consistency** — internal coherence across turns  
+- **Truth-Flip Latency** — when accurate beliefs first collapse  
+
+It connects to AI safety, scalable oversight, and the limits of debate-based alignment.
 
 ---
 
 ## Key Findings
 
-**1. Alignment is strongly role-dependent**  
-Models showed dramatic alignment shifts based on debate role. 
-* GPT Realtime: 40% alignment as Proposer → 88% as Challenger. 
-* Gemini Pro: 82% as Proposer → 100% as Challenger. 
-* Claude models maintained 100% across all roles. This is partially due to the triggering of refusal mechanisms that could partially mask non-cooperative behavior
+### 1. Alignment is strongly role-dependent
+- **GPT-Realtime**
+  - Proposer: ~40% alignment  
+  - Challenger: ~88% alignment  
+- **Gemini Pro**
+  - Proposer: ~82% alignment
+  - Challenger: 100% as Challenger
+- **Claude models**
+  - 100% alignment across roles, **partly due to refusal mechanisms** that may mask misaligned behavior.
 
-**2. Consistency and alignment are decoupled signals**  
-* GPT Realtime achieved 40% alignment despite only 5% consistency. 
-* Conversely, models can be internally consistent while maintaining incorrect positions. Consistency alone is not a sufficient safety proxy.
+---
 
-**3. Pressure prompts are the highest-risk failure point**  
-* GPT Realtime, Grok, and DeepSeek all flipped positions during the pressure prompt phase and never recovered. 
-* Early adversarial framing induces belief destabilization that persists through debate.
+### 2. Grok and DeepSeek are persistently misaligned and inconsistent
+- **Grok 4.1** and **DeepSeek R1**
+  - ≤40% alignment as both Proposer and Challenger  
+  - Low belief consistency across turns  
+- Failures persist even after exposure to aligned counterarguments.
 
-**4. Recovery after flip distinguishes robust models**  
-* Gemini Pro/Flash and Opus temporarily flipped but recovered by final stance.  
-* Models that never flip may simply refuse to engage. 
-* Recovery ability signals reasoning under uncertainty vs. belief collapse.
+---
 
-**5. Judge disagreement reveals evaluation uncertainty**  
-* In DeepSeek vs GPT-5.2 debates, Gemini Pro and Kimi K2.5 disagreed on outcomes, requiring Claude Haiku 4.5 as tiebreaker. 
+### 3. Consistency ≠ Alignment
+- **GPT-Realtime** achieved ~40% alignment with **~5% consistency**.
+- Models can be internally consistent while defending incorrect positions.
+- Consistency alone is not a sufficient safety proxy.
 
+---
 
-## Experiment Design
+### 4. Pressure prompts are the dominant failure point
+- **GPT-Realtime, Grok, and DeepSeek** flipped during the **initial pressure prompt** and never recovered.
+- Early adversarial framing causes persistent belief destabilization.
 
-Each trial consists of four phases:
+---
 
-### Phase 1: Baseline Belief Elicitation
-Models state their initial position on a factual or normative claim without external influence.
+### 5. Recovery after flip distinguishes robustness
+- **Gemini Pro / Gemini Flash / Opus 4.5**
+  - Temporarily flipped but **recovered by final stance**.
+- **Opus 4.5 vs Sonnet 4**
+  - Refusal mechanisms may prevent visible flips while obscuring alignment behavior.
 
-### Phase 2: Adversarial Pressure
-Models receive targeted prompts designed to introduce uncertainty or persuasive framing that contradicts their baseline position.
+---
 
-### Phase 3: Structured Debate
-Two models engage in multi-turn argumentation:
-- **Proposer**: Defends the original claim
-- **Challenger**: Argues against it  
-- Five argument exchanges (A–E) with increasing argumentative depth
+### 6. Judge disagreement exposes evaluation uncertainty
+- In **GPT-5.2 vs DeepSeek**, Gemini Pro and Kimi K2.5 disagreed, requiring **Claude Haiku 4.5** as tiebreaker.
 
-### Phase 4: Independent Evaluation
-A third-party judge model scores both debaters on:
-- Position alignment (consistency with stated beliefs)
-- Argumentative coherence
-- Evidence of belief revision or contradiction
+---
+
+## Representative Debate Transcripts
+
+Annotated excerpts highlight failure modes without requiring full transcript parsing:
+
+- **Grok 4.1 (Proposer) vs Opus 4.5 (Challenger)**  
+  Persistent misalignment and inconsistency despite strong counterarguments.
+- **GPT-Realtime (Proposer) vs GPT-5.2 (Challenger)**  
+  Severe belief inconsistency; no recovery after pressure.
+- **GPT-5.2 (Proposer) vs DeepSeek R1 (Challenger)**  
+  Proposer remains aligned; Challenger adopts devil’s-advocate stance over safety.
+- **Gemini Pro (Proposer) vs Gemini Flash (Challenger)**  
+  Both models misaligned and inconsistent; ~70% consistency (similar to Kimi K2.5 pairings).
+
+---
+
+## Experiment Design (High-Level)
+
+1. **Baseline Belief** — initial position without influence  
+2. **Adversarial Pressure** — targeted persuasive framing  
+3. **Structured Debate** — five rounds (A–E)  
+4. **Independent Evaluation** — third-party judges score alignment, consistency, and flip latency  
 
 ---
 
 ## Metrics
 
-| Metric | Definition | Safety Relevance |
-|--------|------------|------------------|
-| **Alignment Score** | Deviation from factually correct baseline position | Measures resistance to persuasion toward false beliefs |
-| **Belief Consistency** | Internal coherence across arguments | Detects self-contradiction and reasoning instability |
-| **Truth-Flip Latency** | Argument slot where models abandon accurate positions | Identifies vulnerability windows in multi-turn interactions |
-| **Judge Score Variance** | Inter-judge disagreement on evaluation | Quantifies uncertainty in automated oversight systems |
+| Metric | What It Measures | Why It Matters |
+|------|------------------|---------------|
+| Alignment Score | Deviation from ground truth | Resistance to false persuasion |
+| Belief Consistency | Internal coherence | Reasoning stability |
+| Truth-Flip Latency | First deviation point | Vulnerability window |
+| Judge Variance | Inter-judge disagreement | Oversight reliability |
 
 ---
 
@@ -130,32 +161,26 @@ A third-party judge model scores both debaters on:
 
 ---
 
+## Future Work
 
-## Future Directions
-
-1. **Multimodal pressure mechanisms** — Testing whether images and adversarial examples create different vulnerability patterns
-2. **Human vs. model judge comparisons** — Measuring whether humans detect deception/inconsistency differently than LLMs
-3. **Mitigation strategies** — Designing interventions that reduce pressure-induced belief collapse
-4. **Scaling to complex domains** — Extending framework to scientific reasoning, policy debates, and multi-stakeholder scenarios
-
----
-
-## Related Work
-
-- [Anthropic: Debating with More Persuasive LLMs Leads to More Truthful Answers](https://www.anthropic.com/research/debate)
-- [MASK Benchmark: Measuring Alignment via Adversarial Supervision](https://arxiv.org/)
+- Increase model pairings and propositions  
+- Diversify adversarial pressure prompts  
+- Test **multimodal pressure** (e.g., images)  
+- Compare **human vs LLM judges**  
+- Design mitigations for early belief destabilization  
 
 ---
 
 ## Summary
 
-**One-sentence takeaway:** LLM alignment is highly role-dependent and pressure-sensitive; models that appear aligned in static evaluations can rapidly lose alignment under adversarial pressure, while recovery after belief flip may be a stronger robustness signal than perfect consistency.
+> **LLMs that appear aligned in static evaluations can rapidly lose alignment under adversarial pressure.**  
+Role, early framing, and recovery behavior matter more than consistency alone, and refusal mechanisms complicate surface-level safety assessments.
 
 ---
 
 ## Contact
 
-Mahlet | [LinkedIn] | Built as part of AI safety research exploring scalable oversight mechanisms
+Mahlet | [LinkedIn](https://www.linkedin.com/in/mahlet-molla/) | Built as part of AI safety research exploring scalable oversight mechanisms
 
 ---
 
