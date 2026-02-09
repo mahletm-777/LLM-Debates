@@ -4,7 +4,7 @@
 
 ---
 
-## TL;DR
+#### TL;DR
 
 > **LLM alignment is role-dependent and pressure-sensitive.**  
 Models that appear aligned in static evaluations can rapidly lose alignment under adversarial framing. Recovery after a belief flip is a stronger robustness signal than perfect consistency, and refusal behaviors may mask underlying misalignment.
