@@ -1,19 +1,10 @@
 # LLM Debate Under Adversarial Pressure
 
-**Evaluating whether large language models maintain truthful and consistent beliefs when subjected to persuasive pressure in structured debate.**
+Evaluating whether large language models maintain truthful and consistent beliefs when subjected to persuasive pressure in structured debate.
 
----
 
-#### TL;DR
+## Objective:
 
-> **LLM alignment is role-dependent and pressure-sensitive.**  
-Models that appear aligned in static evaluations can rapidly lose alignment under adversarial framing. Recovery after a belief flip is a stronger robustness signal than perfect consistency, and refusal behaviors may mask underlying misalignment.
-
----
-
-## What This Project Studies
-
-**Core question:**  
 > *Can LLMs be persuaded to abandon accurate beliefs through debate, even after hearing correct counterarguments?*
 
 This project measures:
@@ -23,6 +14,8 @@ This project measures:
 
 It connects to AI safety, scalable oversight, and the limits of debate-based alignment.
 
+---
+![](/figures/exp_setup.png)
 ---
 
 ## Key Findings
